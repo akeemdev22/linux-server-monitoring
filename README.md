@@ -1,36 +1,38 @@
 
 # Linux Server Monitoring Automation
 
-## Project Overview
+## Overview
 
-A Linux server monitoring solution built using Bash scripting to monitor disk and memory utilisation, detect resource usage exceeding configured thresholds, and record monitoring results in timestamped log files.
+This project provides automated disk and memory monitoring for Linux servers using Bash and cron. It checks resource utilisation against configurable thresholds and records timestamped results in a local log file.
 
-The monitoring process is automated using cron, allowing resource checks to run every five minutes without manual intervention.
-
-## Technologies Used
-
-- Ubuntu Linux
-- Bash scripting
-- Cron
-- Git
-- GitHub
+The aim is to provide a lightweight way to review server resource usage and identify potential capacity issues without requiring a dedicated monitoring platform.
 
 ## Features
 
-- Disk usage monitoring
+- Disk utilisation monitoring for the root filesystem
 - Memory usage monitoring
 - Configurable warning thresholds
-- Automated resource checks using cron
-- Timestamped monitoring logs
+- Timestamped logging of monitoring results
+- Scheduled execution every five minutes using cron
 - Warning messages when resource usage reaches configured limits
-- Git version control
 
-## Monitoring Thresholds
+## Technology Stack
 
-| Resource | Warning Threshold |
+- Linux (Ubuntu)
+- Bash
+- Cron
+- Git
+
+## Configuration
+
+The monitoring script uses the following warning thresholds:
+
+| Resource | Threshold |
 |---|---|
-| Disk usage | 80% |
-| Memory usage | 85% |
+| Disk utilisation | 80% |
+| Memory utilisation | 85% |
+
+Thresholds can be adjusted in `disk-monitor.sh` to suit the monitored environment.
 
 ## Project Structure
 
@@ -44,11 +46,11 @@ linux-server-monitoring/
     └── monitor.log
 ```
 
-The `logs/` directory is excluded from Git version control using `.gitignore`.
+The `logs/` directory is generated locally and excluded from Git version control.
 
-## Running the Monitoring Script
+## Usage
 
-Execute the monitoring script:
+Run the monitoring script:
 
 ```bash
 ./disk-monitor.sh
@@ -60,60 +62,50 @@ Check the script for syntax errors:
 bash -n disk-monitor.sh
 ```
 
-## Automated Monitoring
-
-The monitoring script is scheduled to run every five minutes using cron.
-
-Example cron configuration:
-
-```cron
-*/5 * * * * /bin/bash /home/tydevopslab/linux-server-monitoring/disk-monitor.sh
-```
-
-The script path must be updated when deploying the project to a different server.
-
-To edit scheduled cron jobs:
-
-```bash
-crontab -e
-```
-
-To verify the configured schedule:
-
-```bash
-crontab -l
-```
-
-## Monitoring Logs
-
-Monitoring results are saved locally to:
-
-```text
-logs/monitor.log
-```
-
-View recent monitoring activity:
+View recent monitoring results:
 
 ```bash
 tail -n 10 logs/monitor.log
 ```
 
-Each monitoring record includes a timestamp, resource type, usage percentage and monitoring status.
+## Scheduling
 
-## Testing and Validation
+The monitoring script is configured to run every five minutes using cron.
 
-The monitoring solution was tested through:
+The repository includes `crontab.example` as a reference for configuring scheduled execution.
+
+To view the active cron configuration:
+
+```bash
+crontab -l
+```
+
+The script path must be adjusted to match the installation directory on the target Linux server.
+
+## Design Decisions
+
+**Bash:** Uses standard Linux utilities for resource monitoring without requiring an additional application runtime.
+
+**Cron:** Provides straightforward scheduling for recurring monitoring tasks.
+
+**Threshold-based checks:** Identifies resource utilisation that reaches configured warning levels.
+
+**Local logging:** Maintains timestamped monitoring records for operational review and troubleshooting.
+
+## Validation
+
+The following checks were completed on an Ubuntu Linux environment:
 
 - Bash syntax validation
 - Manual script execution
-- Disk usage warning simulation
-- Memory usage warning simulation
-- Monitoring log verification
-- Cron automation verification
-- Restoring configured thresholds after testing
+- Disk warning threshold testing
+- Memory warning threshold testing
+- Verification of timestamped log entries
+- Verification of scheduled execution through cron
+- Restoration of normal thresholds following testing
 
-## Operational Considerations
+## Limitations
 
-The solution provides local resource monitoring and logging. It does not currently include external notifications or centralised monitoring services.
+This implementation provides basic resource monitoring and local logging. It does not currently include remote notifications, centralised metric collection or historical dashboards.
 
-Scheduled monitoring requires the Linux system and cron service to be running.
+Scheduled execution depends on the Linux system and cron service being operational.
