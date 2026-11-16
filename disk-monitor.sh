@@ -17,3 +17,22 @@ if [ "$DISK_USAGE" -ge "$DISK_THRESHOLD" ]; then
 else
     echo "OK: Disk usage is within the acceptable limit."
 fi
+
+
+
+# Set the memory warning threshold
+MEMORY_THRESHOLD=85
+
+# Collect current memory usage
+MEMORY_USAGE=$(free -m | awk '/^Mem:/ {printf "%.0f\n", ($2-$7)/$2*100}')
+
+echo "===== LINUX MEMORY MONITORING ====="
+echo "Current Memory Usage: $MEMORY_USAGE%"
+echo "Warning Threshold: $MEMORY_THRESHOLD%"
+
+# Compare memory usage with the threshold
+if [ "$MEMORY_USAGE" -ge "$MEMORY_THRESHOLD" ]; then
+    echo "WARNING: Memory usage has reached the threshold!"
+else
+    echo "OK: Memory usage is within the acceptable limit."
+fi
