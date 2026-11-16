@@ -7,10 +7,10 @@ DISK_THRESHOLD=80
 MEMORY_THRESHOLD=85
 
 # Log file configuration
-LOG_FILE="logs/monitor.log"
+LOG_FILE="$HOME/linux-server-monitoring/logs/monitor.log"
 
 # Create the logs directory if necessary
-mkdir -p logs
+mkdir -p "$(dirname "$LOG_FILE")"
 
 # Collect system information
 DISK_USAGE=$(df -P / | awk 'NR==2 {gsub(/%/, "", $5); print $5}')

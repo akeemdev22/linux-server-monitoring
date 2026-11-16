@@ -1,0 +1,3 @@
+
+# Run Linux server monitoring every five minutes
+*/5 * * * * /bin/bash /home/tydevopslab/linux-server-monitoring/disk-monitor.sh
