@@ -3,109 +3,110 @@
 
 ## Overview
 
-This project provides automated disk and memory monitoring for Linux servers using Bash and cron. It checks resource utilisation against configurable thresholds and records timestamped results in a local log file.
+A Bash based monitoring script for checking disk and memory utilisation on Linux servers. The script compares resource usage against defined thresholds, reports the status of each check and writes timestamped results to a local log file.
 
-The aim is to provide a lightweight way to review server resource usage and identify potential capacity issues without requiring a dedicated monitoring platform.
+Cron is used to run the monitoring script every five minutes, removing the need to execute checks manually.
 
 ## Features
 
-- Disk utilisation monitoring for the root filesystem
-- Memory usage monitoring
-- Configurable warning thresholds
-- Timestamped logging of monitoring results
-- Scheduled execution every five minutes using cron
-- Warning messages when resource usage reaches configured limits
+- Monitors disk utilisation on the root filesystem
+- Checks system memory usage
+- Reports warnings when resource usage reaches configured thresholds
+- Records monitoring results with timestamps
+- Runs automatically every five minutes using cron
+- Keeps generated log files outside Git version control
 
-## Technology Stack
+## Technologies
 
-- Linux (Ubuntu)
+- Ubuntu Linux
 - Bash
 - Cron
-- Git
+- Git and GitHub
 
 ## Configuration
 
-The monitoring script uses the following warning thresholds:
+The monitoring script uses two warning thresholds:
 
-| Resource | Threshold |
-|---|---|
-| Disk utilisation | 80% |
-| Memory utilisation | 85% |
+- **Disk usage:** 80%
+- **Memory usage:** 85%
 
-Thresholds can be adjusted in `disk-monitor.sh` to suit the monitored environment.
+These values can be changed in `disk-monitor.sh` depending on the requirements of the server being monitored.
 
-## Project Structure
+## Project Files
 
-```text
-linux-server-monitoring/
-├── disk-monitor.sh
-├── crontab.example
-├── .gitignore
-├── README.md
-└── logs/
-    └── monitor.log
-```
+- `disk-monitor.sh` — Main script responsible for checking disk and memory usage, evaluating thresholds and writing monitoring logs.
+- `crontab.example` — Example cron configuration showing how to schedule the monitoring script.
+- `.gitignore` — Prevents locally generated monitoring logs from being committed to Git.
+- `README.md` — Project documentation.
 
-The `logs/` directory is generated locally and excluded from Git version control.
+Monitoring records are written locally to `logs/monitor.log`.
 
-## Usage
+## Running the Script
 
-Run the monitoring script:
+Clone the repository and navigate into the project directory.
 
-```bash
-./disk-monitor.sh
-```
+Give the monitoring script execute permission if required:
 
-Check the script for syntax errors:
+`chmod +x disk-monitor.sh`
 
-```bash
-bash -n disk-monitor.sh
-```
+Run the script manually:
 
-View recent monitoring results:
+`./disk-monitor.sh`
 
-```bash
-tail -n 10 logs/monitor.log
-```
+Check the script for Bash syntax errors:
+
+`bash -n disk-monitor.sh`
+
+View the latest monitoring records:
+
+`tail -n 10 logs/monitor.log`
 
 ## Scheduling
 
-The monitoring script is configured to run every five minutes using cron.
+The monitoring script is scheduled to execute every five minutes using cron.
 
-The repository includes `crontab.example` as a reference for configuring scheduled execution.
+The repository includes `crontab.example` as a reference for setting up the scheduled task.
 
-To view the active cron configuration:
+To configure the cron job:
 
-```bash
-crontab -l
-```
+`crontab -e`
 
-The script path must be adjusted to match the installation directory on the target Linux server.
+To verify the configured schedule:
 
-## Design Decisions
+`crontab -l`
 
-**Bash:** Uses standard Linux utilities for resource monitoring without requiring an additional application runtime.
+The cron configuration must reference the correct script location on the target server.
 
-**Cron:** Provides straightforward scheduling for recurring monitoring tasks.
+## Implementation
 
-**Threshold-based checks:** Identifies resource utilisation that reaches configured warning levels.
+The monitoring script uses standard Linux utilities to collect resource usage information.
 
-**Local logging:** Maintains timestamped monitoring records for operational review and troubleshooting.
+Disk utilisation is retrieved using `df`, while memory usage is calculated using `free` and `awk`.
 
-## Validation
+The collected values are compared against configured thresholds to determine whether the monitored resources are within acceptable limits.
 
-The following checks were completed on an Ubuntu Linux environment:
+Each execution records the monitoring results and timestamp in a local log file, allowing previous checks to be reviewed during troubleshooting.
 
-- Bash syntax validation
-- Manual script execution
-- Disk warning threshold testing
-- Memory warning threshold testing
-- Verification of timestamped log entries
-- Verification of scheduled execution through cron
-- Restoration of normal thresholds following testing
+Cron handles recurring execution without requiring the script to remain running continuously.
+
+## Testing
+
+The implementation was tested on an Ubuntu Linux virtual machine.
+
+Validation included:
+
+- Checking Bash syntax
+- Running the script manually
+- Testing disk usage warnings by temporarily lowering the threshold
+- Testing memory usage warnings by temporarily lowering the threshold
+- Confirming monitoring results were written to the log file
+- Verifying that cron executed the script automatically
+- Restoring the original thresholds after testing
 
 ## Limitations
 
-This implementation provides basic resource monitoring and local logging. It does not currently include remote notifications, centralised metric collection or historical dashboards.
+The current implementation provides basic resource monitoring and local logging.
 
-Scheduled execution depends on the Linux system and cron service being operational.
+It does not send email notifications, collect metrics centrally or provide a monitoring dashboard.
+
+Scheduled checks depend on the Linux server and cron service being operational.
